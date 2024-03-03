@@ -3,7 +3,6 @@
 #include <unordered_map>
 #include <fstream>
 #include <sstream>
-#include <unordered_set>
 //
 //using namespace std;
 
@@ -14,7 +13,8 @@ float alpha; //smoothing factor
 
 float nBits; //number of bits for encoding
 
-std::unordered_set<char> alphabet;
+std::unordered_map<char, int> alphabet;
+std::unordered_map<std::string, int> hashTable;
 
 std::unordered_map<std::string, std::string> getFlags(int argc, char* argv[]) {
     std::unordered_map<std::string, std::string> flags;
@@ -104,16 +104,14 @@ int main(int argc, char* argv[]) {
     std::string fileContent = buffer.str();
 
     for (char ch : fileContent) {
-        alphabet.insert(ch);
+        alphabet[ch]++;
     }
 
-    std::cout << "Unique characters in the string: ";
-    for (char ch : alphabet) {
-        std::cout << ch << " ";
+    // Print the counts of all characters
+    std::cout << "Counts of all characters in the string:\n";
+    for (const auto& pair : alphabet) {
+        std::cout << "'" << pair.first << "': " << pair.second << std::endl;
     }
-    std::cout << std::endl;
-
-
 
     return 0;
 }

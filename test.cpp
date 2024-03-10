@@ -87,7 +87,7 @@ int processFlags(unordered_map<string, string> flags) {
     return 0;
 }
 
-int getAlphabet() {
+int getAlphabetFrequency() {
 
     char byte;
 
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    getAlphabet();
+    getAlphabetFrequency();
 
     char byte;
 
@@ -163,9 +163,9 @@ int main(int argc, char* argv[]) {
     while (file.get(byte)) {
         defaultNbits += defaultNbitsPerChar;
 
-        /*if (position % 1000 == 0) {
+        if (position % 1000 == 0) {
             cout << position << " out of " << totalChars - 1 << ", " << ((float)position) / ((float)totalChars - 1) * 100 << "%" << '\r';
-        }*/
+        }
 
         if (activeModel) {
             correctSymbolProbability = predictProbability(hits, misses, alpha);
@@ -226,6 +226,8 @@ int main(int argc, char* argv[]) {
 
         position++;
     }
+
+    file.close();
 
     cout << "\n";
     cout << "Nbits: " << nbits << "\n";

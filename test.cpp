@@ -2,6 +2,7 @@
 #include <string>
 #include <unordered_map>
 #include <fstream>
+#include<algorithm>
 #include <sstream>
 //
 using namespace std;
@@ -11,10 +12,19 @@ float threshold; //value to stop a copy model
 float kmerSize; //size of sequence to use as anchors
 float alpha; //smoothing factor
 
-float nBits; //number of bits for encoding
+float nbits = 0; //number of bits for encoding
+float defaultNbits = 0;
+
+int encodedChars = 0;
+int nonEncodedChars = 0;
+
+int totalChars = 0;
+int alphabetSize = 0;
 
 unordered_map<char, int> alphabet;
 unordered_map<string, int> hashTable;
+unordered_map<string, int> kmerCounter;
+unordered_map<int, int> averageSizeOfCopy;
 
 unordered_map<string, string> getFlags(int argc, char* argv[]) {
     unordered_map<string, string> flags;
@@ -48,8 +58,9 @@ int processFlags(unordered_map<string, string> flags) {
         filename = flags.at("f");
     }
     else {
-        cout << "No filename given\n";
-        return 1;
+        //cout << "No filename given\n";
+        //return 1;
+        filename = "C:\\Users\\admin\\Desktop\\UA\\TAI\\copy_model\\chry.txt";
     }
 
     if (flags.count("t")) {
@@ -70,7 +81,7 @@ int processFlags(unordered_map<string, string> flags) {
         kmerSize = stof(flags.at("k"));
     }
     else {
-        kmerSize = 5;
+        kmerSize = 8;
     }
 
     return 0;
@@ -89,10 +100,13 @@ int getAlphabet() {
 
     while (file.get(byte)) {
         alphabet[byte]++;
+        totalChars++;
     }
 
     // Close the file
     file.close();
+
+    alphabetSize = alphabet.size();
 
     //// Print the counts of all characters
     //cout << "Counts of all characters in the string:\n";
@@ -101,6 +115,10 @@ int getAlphabet() {
     //}
 
     return 0;
+}
+
+float predictProbability(int hits, int misses, float alpha) {
+    return (hits + alpha) / (hits + misses + 2 * alpha);
 }
 
 int main(int argc, char* argv[]) {
@@ -125,9 +143,59 @@ int main(int argc, char* argv[]) {
 
     string window = "";
     string completeString = "";
+
+    float defaultNbitsPerChar = ceil(log2(alphabetSize));
+
     int position = 0;
+    int misses;
+    int hits;
+    bool activeModel = false;
+    int testingPosition;
+    int offset;
+    string currentAnchor;
+
+    float correctSymbolProbability;
+    float wrongSymbolProbability;
+    float info;
+    float prob;
+    char predictedSymbol;
 
     while (file.get(byte)) {
+        defaultNbits += defaultNbitsPerChar;
+
+        /*if (position % 1000 == 0) {
+            cout << position << " out of " << totalChars - 1 << ", " << ((float)position) / ((float)totalChars - 1) * 100 << "%" << '\r';
+        }*/
+
+        if (activeModel) {
+            correctSymbolProbability = predictProbability(hits, misses, alpha);
+            predictedSymbol = completeString[testingPosition + offset];
+            if (byte == predictedSymbol) {
+                hits++;
+                info = -log2(correctSymbolProbability);
+            }
+            else {
+                wrongSymbolProbability = (1 - correctSymbolProbability) / (alphabetSize - 1);
+                misses++;
+                info = -log2(wrongSymbolProbability);
+            }
+            nbits += info;
+            encodedChars++;
+            offset++;
+            prob = predictProbability(hits, misses, alpha);
+            if (prob < threshold) {
+                activeModel = false;
+                if (averageSizeOfCopy.find(offset) == averageSizeOfCopy.end()) {
+                    averageSizeOfCopy[offset] = 0;
+                }
+                else {
+                    averageSizeOfCopy[offset]++;
+                }
+            }
+        } else {
+            nbits += defaultNbitsPerChar;
+            nonEncodedChars++;
+        }
 
         if (window.length() == kmerSize) {
             window.erase(0, 1);
@@ -135,13 +203,44 @@ int main(int argc, char* argv[]) {
 
         window.push_back(byte);
         completeString.push_back(byte);
-        
+
         if (window.length() == kmerSize) {
-            hashTable[window] = position;
+            if (completeString.length() > kmerSize && (hashTable.find(window) != hashTable.end()) && !activeModel) {
+                hits = 0;
+                misses = 0;
+                activeModel = true;
+                testingPosition = hashTable[window];
+                offset = 0;
+                currentAnchor = window;
+            }
+
+            hashTable[window] = position+1;
+            if (kmerCounter.find(window) == kmerCounter.end()) {
+                kmerCounter[window] = 0;
+            }
+            else {
+                kmerCounter[window]++;
+            }
         }
+
 
         position++;
     }
+
+    cout << "\n";
+    cout << "Nbits: " << nbits << "\n";
+    cout << "Default Nbits: " << defaultNbits << "\n";
+    cout << "Encoded chars: " << encodedChars << "\n";
+    cout << "Non Encoded chars: " << nonEncodedChars << "\n";
+
+   /* std::for_each(
+        kmerCounter.begin(), kmerCounter.end(),
+        [](pair<string, int> p) {
+
+            cout << p.first << " :: " << p.second
+                << endl;
+        });*/
+
 
     return 0;
 }

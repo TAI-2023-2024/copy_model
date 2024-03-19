@@ -12,14 +12,16 @@ float threshold; //value to stop a copy model
 float kmerSize; //size of sequence to use as anchors
 float alpha; //smoothing factor
 
-float nbits = 0; //number of bits for encoding
-float defaultNbits = 0;
+unsigned int nbits = 0; //number of bits for encoding
+unsigned int defaultNbits = 0;
 
 int encodedChars = 0;
 int nonEncodedChars = 0;
 
-int totalChars = 0;
-int alphabetSize = 0;
+unsigned int totalChars = 0;
+unsigned int alphabetSize = 0;
+unsigned int CharsLeft = 0;
+char AlphaChar = ' '; // alphabet char with greatest frequency
 
 unordered_map<char, int> alphabet;
 unordered_map<string, int> hashTable;
@@ -117,8 +119,41 @@ int getAlphabetFrequency() {
     return 0;
 }
 
+int getMAXAlphabetFrequency()
+{
+    if(alphabet.size() == 0)
+    {
+        cout << "The files alphabet is null"<< endl;
+        return 1;
+    }
+
+    AlphaChar = alphabet.find(AlphaChar) != alphabet.end()? AlphaChar : alphabet.begin()->first;
+
+    for(pair<char,int> c : alphabet)
+    {
+         AlphaChar = c.second<= alphabet[AlphaChar]? AlphaChar : c.first;
+    }
+
+    return 0;
+}
+
 float predictProbability(int hits, int misses, float alpha) {
     return (hits + alpha) / (hits + misses + 2 * alpha);
+}
+
+unsigned int InfoBits(char ActualByte, char predictedSymbol, float predictedSymbolProb)
+{    
+    if (ActualByte == predictedSymbol)
+    {
+        //hits++;
+        return ceil(-log2(predictedSymbolProb));
+    }
+    else 
+    {
+        //wrongSymbolProbability = (1 - correctSymbolProbability) / (alphabetSize - 1);
+        //misses++;
+        return ceil(-log2((1 - predictedSymbolProb) / (alphabetSize - 1)));
+    }           
 }
 
 int main(int argc, char* argv[]) {
@@ -131,6 +166,7 @@ int main(int argc, char* argv[]) {
     }
 
     getAlphabetFrequency();
+    CharsLeft = totalChars;
 
     char byte;
 
@@ -172,16 +208,20 @@ int main(int argc, char* argv[]) {
             predictedSymbol = completeString[testingPosition + offset];
             if (byte == predictedSymbol) {
                 hits++;
-                info = -log2(correctSymbolProbability);
+                info = ceil(-log2(correctSymbolProbability));
             }
             else {
                 wrongSymbolProbability = (1 - correctSymbolProbability) / (alphabetSize - 1);
                 misses++;
-                info = -log2(wrongSymbolProbability);
+                info = (-log2(wrongSymbolProbability));
             }
             nbits += info;
             encodedChars++;
             offset++;
+            
+            alphabet[byte]--; 
+            CharsLeft--;
+
             prob = predictProbability(hits, misses, alpha);
             if (prob < threshold) {
                 activeModel = false;
@@ -193,8 +233,17 @@ int main(int argc, char* argv[]) {
                 }
             }
         } else {
-            nbits += defaultNbitsPerChar;
+            //nbits += defaultNbitsPerChar;
+            
+            //Predict symbol in acordance to the alphabet
+            getMAXAlphabetFrequency();
+            float p = alphabet[AlphaChar] / CharsLeft;
+            nbits += InfoBits(byte,AlphaChar,p);              
+
             nonEncodedChars++;
+
+            alphabet[byte]--; 
+            CharsLeft--;
         }
 
         if (window.length() == kmerSize) {

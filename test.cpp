@@ -2,7 +2,7 @@
 #include <string>
 #include <unordered_map>
 #include <fstream>
-#include<algorithm>
+#include <algorithm>
 #include <sstream>
 //
 using namespace std;
@@ -62,7 +62,8 @@ int processFlags(unordered_map<string, string> flags) {
     else {
         //cout << "No filename given\n";
         //return 1;
-        filename = "C:\\Users\\admin\\Desktop\\UA\\TAI\\copy_model\\chry.txt";
+        //filename = "C:\\Users\\admin\\Desktop\\UA\\TAI\\copy_model\\chry.txt";
+        filename = ".\\chry.txt";
     }
 
     if (flags.count("t")) {
@@ -197,11 +198,12 @@ int main(int argc, char* argv[]) {
     char predictedSymbol;
 
     while (file.get(byte)) {
-        defaultNbits += defaultNbitsPerChar;
+        //defaultNbits += defaultNbitsPerChar;
+        defaultNbits = defaultNbits + 8;
 
-        if (position % 1000 == 0) {
-            cout << position << " out of " << totalChars - 1 << ", " << ((float)position) / ((float)totalChars - 1) * 100 << "%" << '\r';
-        }
+        //if (position % 1000 == 0) {
+        //    cout << position << " out of " << totalChars - 1 << ", " << ((float)position) / ((float)totalChars - 1) * 100 << "%" << '\r';
+        //}
 
         if (activeModel) {
             correctSymbolProbability = predictProbability(hits, misses, alpha);
@@ -237,7 +239,7 @@ int main(int argc, char* argv[]) {
             
             //Predict symbol in acordance to the alphabet
             getMAXAlphabetFrequency();
-            float p = alphabet[AlphaChar] / CharsLeft;
+            float p = (float)alphabet[AlphaChar] / (float)CharsLeft;
             nbits += InfoBits(byte,AlphaChar,p);              
 
             nonEncodedChars++;

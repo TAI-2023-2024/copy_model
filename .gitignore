@@ -31,4 +31,8 @@
 *.out
 *.app
 
+# others
+*.ilk
+*.pdb
+
 /.vs/*

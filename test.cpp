@@ -157,6 +157,7 @@ unsigned int InfoBits(char ActualByte, char predictedSymbol, float predictedSymb
     }           
 }
 
+
 int main(int argc, char* argv[]) {
 
     unordered_map<string, string> flags = getFlags(argc, argv);
@@ -190,6 +191,8 @@ int main(int argc, char* argv[]) {
     int testingPosition;
     int offset;
     string currentAnchor;
+    int wlhits; // number of hits on last kmer/window length attempts
+    int wlmisses; // number of misses on last kmer/window length attempts
 
     float correctSymbolProbability;
     float wrongSymbolProbability;
@@ -210,11 +213,13 @@ int main(int argc, char* argv[]) {
             predictedSymbol = completeString[testingPosition + offset];
             if (byte == predictedSymbol) {
                 hits++;
+                wlhits++;
                 info = ceil(-log2(correctSymbolProbability));
             }
             else {
                 wrongSymbolProbability = (1 - correctSymbolProbability) / (alphabetSize - 1);
                 misses++;
+                wlmisses++;
                 info = (-log2(wrongSymbolProbability));
             }
             nbits += info;
@@ -224,15 +229,27 @@ int main(int argc, char* argv[]) {
             alphabet[byte]--; 
             CharsLeft--;
 
-            prob = predictProbability(hits, misses, alpha);
-            if (prob < threshold) {
-                activeModel = false;
-                if (averageSizeOfCopy.find(offset) == averageSizeOfCopy.end()) {
-                    averageSizeOfCopy[offset] = 0;
+            // kmer hits & misses
+            if((wlhits+wlmisses)> kmerSize)
+            {
+                if(byte == predictedSymbol)
+                {
+                    wlmisses--;
+                }else{
+                    wlhits--;
+                }            
+
+                prob = predictProbability(wlhits, wlmisses, alpha);
+                if (prob < threshold) {
+                    activeModel = false;
+                    if (averageSizeOfCopy.find(offset) == averageSizeOfCopy.end()) {
+                        averageSizeOfCopy[offset] = 0;
+                    }
+                    else {
+                        averageSizeOfCopy[offset]++;
+                    }
                 }
-                else {
-                    averageSizeOfCopy[offset]++;
-                }
+
             }
         } else {
             //nbits += defaultNbitsPerChar;
@@ -259,6 +276,8 @@ int main(int argc, char* argv[]) {
             if (completeString.length() > kmerSize && (hashTable.find(window) != hashTable.end()) && !activeModel) {
                 hits = 0;
                 misses = 0;
+                wlhits = 0;
+                wlmisses = 0;
                 activeModel = true;
                 testingPosition = hashTable[window];
                 offset = 0;

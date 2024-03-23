@@ -4,6 +4,7 @@
 #include <fstream>
 #include<algorithm>
 #include <sstream>
+#include <cmath>
 //
 using namespace std;
 
@@ -60,7 +61,7 @@ int processFlags(unordered_map<string, string> flags) {
     else {
         //cout << "No filename given\n";
         //return 1;
-        filename = "C:\\Users\\admin\\Desktop\\UA\\TAI\\copy_model\\chry.txt";
+        filename = "chry.txt";
     }
 
     if (flags.count("t")) {
@@ -141,8 +142,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    string window = "";
-    string completeString = "";
+    string window;
+    string completeString;
 
     float defaultNbitsPerChar = ceil(log2(alphabetSize));
 

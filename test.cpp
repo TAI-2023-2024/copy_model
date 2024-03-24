@@ -4,6 +4,7 @@
 #include <fstream>
 #include<algorithm>
 #include <sstream>
+#include <chrono>
 //
 using namespace std;
 
@@ -65,7 +66,7 @@ int processFlags(unordered_map<string, string> flags) {
     else {
         //cout << "No filename given\n";
         //return 1;
-        filename = "C:\\Users\\admin\\Desktop\\UA\\TAI\\copy_model\\chry.txt";
+        filename = "C:\\Users\\admin\\Desktop\\UA\\TAI\\copy_model\\Data\\chry.txt";
     }
 
     if (flags.count("t")) {
@@ -133,7 +134,7 @@ double predictProbability(int hits, int misses, double alpha) {
     return (hits + alpha) / (hits + misses + 2 * alpha);
 }
 
-unsigned int InfoBits(char ActualByte, char predictedSymbol, double predictedSymbolProb)
+double InfoBits(char ActualByte, char predictedSymbol, double predictedSymbolProb)
 {
     if (ActualByte == predictedSymbol)
     {
@@ -150,6 +151,8 @@ unsigned int InfoBits(char ActualByte, char predictedSymbol, double predictedSym
 
 
 int main(int argc, char* argv[]) {
+
+    auto start = chrono::high_resolution_clock::now();
 
     unordered_map<string, string> flags = getFlags(argc, argv);
 
@@ -269,6 +272,10 @@ int main(int argc, char* argv[]) {
 
     file.close();
 
+    auto stop = chrono::high_resolution_clock::now();
+
+    auto duration = chrono::duration_cast<chrono::seconds>(stop - start);
+
     cout << "\n";
     cout << "Nbits: " << nbits << "\n";
     cout << "Default Nbits: " << defaultNbits << "\n";
@@ -276,6 +283,7 @@ int main(int argc, char* argv[]) {
     cout << "Non Encoded chars: " << nonEncodedChars << "\n";
     cout << "Bits per char: " << nbits / totalChars << "\n";
     cout << "Default Bits per char: " << defaultNbits / totalChars << "\n";
+    cout << "Duration (seconds) : " << duration.count() << "\n";
 
     return 0;
 }

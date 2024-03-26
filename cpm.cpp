@@ -87,7 +87,7 @@ int processFlags(unordered_map<string, string> flags) {
         kmerSize = stof(flags.at("k"));
     }
     else {
-        kmerSize = 15;
+        kmerSize = 10;
     }
 
     return 0;
@@ -163,7 +163,7 @@ int main(int argc, char* argv[]) {
 
     getAlphabetFrequency();
 
-    auto alphabetInfo = sizeof(alphabet) * 8;
+    auto alphabetInfo = alphabetSize * 5 * 8 + 8*2; //each character in the alphabet is a byte and each int is 4 bytes, plus 2 bytes for start and end of metadata
 
     nbits += alphabetInfo;
     
@@ -273,23 +273,23 @@ int main(int argc, char* argv[]) {
         position++;
     }
 
-    file.close();
+    file.close();;
 
     auto stop = chrono::high_resolution_clock::now();
 
     auto duration = chrono::duration_cast<chrono::seconds>(stop - start);
 
     cout << kmerSize << "," << alpha << "," << threshold << "," << nbits << "," << defaultNbits << "," << encodedChars << "," << nonEncodedChars << "," << nbits / totalChars << "," << defaultNbits / totalChars << "," << duration.count() << "\n";
-    //cout << "KmerSize: " << kmerSize << "\n";
-    //cout << "Alpha: " << alpha << "\n";
-    //cout << "Threshold: " << threshold << "\n";
-    //cout << "Nbits: " << nbits << "\n";
-    //cout << "Default Nbits: " << defaultNbits << "\n";
-    //cout << "Encoded chars: " << encodedChars << "\n";
-    //cout << "Non Encoded chars: " << nonEncodedChars << "\n";
-    //cout << "Bits per char: " << nbits / totalChars << "\n";
-    //cout << "Default Bits per char: " << defaultNbits / totalChars << "\n";
-    //cout << "Duration (seconds) : " << duration.count() << "\n";
+   /* cout << "KmerSize: " << kmerSize << "\n";
+    cout << "Alpha: " << alpha << "\n";
+    cout << "Threshold: " << threshold << "\n";
+    cout << "Nbits: " << nbits << "\n";
+    cout << "Default Nbits: " << defaultNbits << "\n";
+    cout << "Encoded chars: " << encodedChars << "\n";
+    cout << "Non Encoded chars: " << nonEncodedChars << "\n";
+    cout << "Bits per char: " << nbits / totalChars << "\n";
+    cout << "Default Bits per char: " << defaultNbits / totalChars << "\n";
+    cout << "Duration (seconds) : " << duration.count() << "\n";*/
 
     return 0;
 }

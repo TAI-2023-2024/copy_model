@@ -5,15 +5,16 @@
 #include <algorithm>
 #include <sstream>
 #include <chrono>
-//
+#include <math.h>
+
 using namespace std;
 
-string filename; //name of file to compress
-double threshold; //value to stop a copy model
-double kmerSize; //size of sequence to use as anchors
-double alpha; //smoothing factor
+string filename;
+double threshold;
+double kmerSize
+double alpha;
 
-double nbits = 0; //number of bits for encoding
+double nbits = 0;
 double defaultNbits = 0;
 
 int encodedChars = 0;
@@ -25,8 +26,6 @@ int alphabetSize = 0;
 
 unordered_map<char, int> alphabet;
 unordered_map<string, int> hashTable;
-/*unordered_map<string, int> kmerCounter;
-unordered_map<int, int> averageSizeOfCopy;*/
 
 string completeString = "";
 char mostFrequent = ' ';
@@ -109,7 +108,6 @@ int getAlphabetFrequency() {
         totalChars++;
     }
 
-    // Close the file
     file.close();
 
     alphabetSize = alphabet.size();
@@ -200,10 +198,6 @@ int main(int argc, char* argv[]) {
 
         defaultNbits += defaultNbitsPerChar;
 
-        /*if (position % 1000 == 0) {
-            cout << position << " out of " << totalChars - 1 << ", " << ((double)position) / ((double)totalChars - 1) * 100 << "%" << '\r';
-        }*/
-
         if (activeModel) {
             correctSymbolProbability = predictProbability(hits, misses, alpha);
             predictedSymbol = completeString[testingPosition + offset];
@@ -275,8 +269,8 @@ int main(int argc, char* argv[]) {
 
     auto duration = chrono::duration_cast<chrono::seconds>(stop - start);
 
-    cout << kmerSize << "," << alpha << "," << threshold << "," << nbits << "," << defaultNbits << "," << encodedChars << "," << nonEncodedChars << "," << nbits / totalChars << "," << defaultNbits / totalChars << "," << duration.count() << "\n";
-   /* cout << "KmerSize: " << kmerSize << "\n";
+    //cout << kmerSize << "," << alpha << "," << threshold << "," << nbits << "," << defaultNbits << "," << encodedChars << "," << nonEncodedChars << "," << nbits / totalChars << "," << defaultNbits / totalChars << "," << duration.count() << "\n";
+    cout << "KmerSize: " << kmerSize << "\n";
     cout << "Alpha: " << alpha << "\n";
     cout << "Threshold: " << threshold << "\n";
     cout << "Nbits: " << nbits << "\n";
@@ -285,7 +279,7 @@ int main(int argc, char* argv[]) {
     cout << "Non Encoded chars: " << nonEncodedChars << "\n";
     cout << "Bits per char: " << nbits / totalChars << "\n";
     cout << "Default Bits per char: " << defaultNbits / totalChars << "\n";
-    cout << "Duration (seconds) : " << duration.count() << "\n";*/
+    cout << "Duration (seconds) : " << duration.count() << "\n";
 
     return 0;
 }

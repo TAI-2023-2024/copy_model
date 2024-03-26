@@ -77,7 +77,6 @@ vector<char> getAlphabet() {
         alphabetSet.insert(byte);
     }
 
-    // Close the file
     file.close();
 
     vector<char> alphabet(alphabetSet.begin(), alphabetSet.end());
@@ -119,9 +118,9 @@ int main(int argc, char* argv[]) {
     string filename = getFilename(inputFilename);
 
 #ifdef _WIN32
-    outputFilename = "Data\\mutated_" + to_string(mutationProbability) + "_" + filename;
+    outputFilename = "src\\mutated_" + to_string(mutationProbability) + "_" + filename;
 #else
-    outputFilename = "Data/mutated_" + to_string(mutationProbability) + "_" + filename;
+    outputFilename = "src/mutated_" + to_string(mutationProbability) + "_" + filename;
 #endif
 
     ifstream inputFile(inputFilename);
@@ -158,13 +157,12 @@ int main(int argc, char* argv[]) {
     outputFile.close();
 
 
-    cout << filename << "," << mutationProbability << "," << mutationCounter << "," << mutationCounter - falseMutationCounter << "," << falseMutationCounter << "\n";
-    /*
+    //cout << filename << "," << mutationProbability << "," << mutationCounter << "," << mutationCounter - falseMutationCounter << "," << falseMutationCounter << "\n";
     cout << "Filename: " << filename << "\n";
     cout << "Mutation Probability: " << mutationProbability << "\n";
     cout << "Mutations: " << mutationCounter << "\n";
     cout << "True Mutations: " << mutationCounter - falseMutationCounter << "\n";
-    cout << "False Mutations: " << falseMutationCounter << "\n";*/
+    cout << "False Mutations: " << falseMutationCounter << "\n";
 
     return 0;
 }

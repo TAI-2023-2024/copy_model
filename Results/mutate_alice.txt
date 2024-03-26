@@ -1,0 +1,4 @@
+Filename,Probability,Mutations,TrueMutations,FalseMutations 
+alice.txt,0.25,42298,41859,439
+alice.txt,0.5,84993,84086,907
+alice.txt,0.75,127963,126614,1349

@@ -2,7 +2,7 @@ import csv
 
 bestOne = None
 
-with open('results.txt', mode='r') as csv_file:
+with open('Results\\results_chry.txt', mode='r') as csv_file:
     csv_reader = csv.DictReader(csv_file)
     line_count = 0
     for row in csv_reader:

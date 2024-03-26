@@ -1,0 +1,4 @@
+MutationProbability,KmerSize,Alpha,Threshold,NBits,DefaultNBits,EncodedChars,NonEncodedChars,BitsPerChar,DefaultBitsPerChar,Duration(s) 
+0.250000,10,10,0.5,4.92362e+07,4.53364e+07,21664169,1004056,2.17203,2,26
+0.500000,10,10,0.5,5.00445e+07,4.53364e+07,21647554,1020671,2.20769,2,26
+0.750000,10,10,0.5,5.01903e+07,4.53364e+07,21645900,1022325,2.21413,2,26

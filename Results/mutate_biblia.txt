@@ -1,0 +1,4 @@
+Filename,Probability,Mutations,TrueMutations,FalseMutations 
+biblia.txt,0.25,1252434,1240817,11617
+biblia.txt,0.5,2503493,2480701,22792
+biblia.txt,0.75,3754107,3719813,34294

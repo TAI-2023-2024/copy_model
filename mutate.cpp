@@ -10,7 +10,7 @@
 using namespace std;
 
 string inputFilename;
-string outputFilename = "C:\\Users\\admin\\Desktop\\UA\\TAI\\copy_model\\mutatedFile.txt";
+string outputFilename;
 float mutationProbability;
 int alphabetSize;
 
@@ -46,9 +46,8 @@ int processFlags(unordered_map<string, string> flags) {
         inputFilename = flags.at("f");
     }
     else {
-        //cout << "No filename given\n";
-        //return 1;
-        inputFilename = "C:\\Users\\admin\\Desktop\\UA\\TAI\\copy_model\\very_small.txt";
+        cout << "No filename given\n";
+        return 1;
     }
 
     if (flags.count("p")) {
@@ -88,6 +87,16 @@ vector<char> getAlphabet() {
     return alphabet;
 }
 
+string getFilename(const std::string& filePath) {
+    int pos = filePath.find_last_of("\\/");
+    if (pos != string::npos) {
+        return filePath.substr(pos + 1);
+    }
+    else {
+        return filePath;
+    }
+}
+
 int main(int argc, char* argv[]) {
 
     unordered_map<string, string> flags = getFlags(argc, argv);
@@ -99,29 +108,46 @@ int main(int argc, char* argv[]) {
 
     vector<char> alphabet = getAlphabet();
 
-    cout << alphabet[0];
-
     random_device rd;
     mt19937 gen(rd());
     uniform_real_distribution<double> randomValue(0.0, 1.0);
     uniform_int_distribution<int> charToMutateInto(0, alphabetSize-1);
 
     char byte;
+    char mutationByte;
+
+    string filename = getFilename(inputFilename);
+
+#ifdef _WIN32
+    outputFilename = "Data\\mutated_" + to_string(mutationProbability) + "_" + filename;
+#else
+    outputFilename = "Data/mutated_" + to_string(mutationProbability) + "_" + filename;
+#endif
 
     ifstream inputFile(inputFilename);
     ofstream outputFile(outputFilename);
 
-    if (!inputFile.is_open() || !outputFile.is_open()) {
+    if (!inputFile.is_open()) {
         cerr << "Error opening the file.\n";
         return 1;
     }
 
+    if (!outputFile.is_open()) {
+        cerr << "Test opening the file.\n";
+        return 1;
+    }
+
     int mutationCounter = 0;
+    int falseMutationCounter = 0;
 
     while (inputFile.get(byte)) {
         if (randomValue(gen) < mutationProbability) {
-            outputFile << alphabet[charToMutateInto(gen)];
+            mutationByte = alphabet[charToMutateInto(gen)];
+            outputFile << mutationByte;
             mutationCounter++;
+            if (mutationByte == byte) {
+                falseMutationCounter++;
+            }
         }
         else {
             outputFile << byte;
@@ -131,7 +157,14 @@ int main(int argc, char* argv[]) {
     inputFile.close();
     outputFile.close();
 
-    cout << "Mutations: " << mutationCounter;
+
+    cout << filename << "," << mutationProbability << "," << mutationCounter << "," << mutationCounter - falseMutationCounter << "," << falseMutationCounter << "\n";
+    /*
+    cout << "Filename: " << filename << "\n";
+    cout << "Mutation Probability: " << mutationProbability << "\n";
+    cout << "Mutations: " << mutationCounter << "\n";
+    cout << "True Mutations: " << mutationCounter - falseMutationCounter << "\n";
+    cout << "False Mutations: " << falseMutationCounter << "\n";*/
 
     return 0;
 }

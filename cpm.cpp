@@ -64,9 +64,8 @@ int processFlags(unordered_map<string, string> flags) {
         filename = flags.at("f");
     }
     else {
-        //cout << "No filename given\n";
-        //return 1;
-        filename = "C:\\Users\\admin\\Desktop\\UA\\TAI\\copy_model\\Data\\chry.txt";
+        cout << "No filename given\n";
+        return 1;
     }
 
     if (flags.count("t")) {
@@ -138,13 +137,10 @@ double InfoBits(char ActualByte, char predictedSymbol, double predictedSymbolPro
 {
     if (ActualByte == predictedSymbol)
     {
-        //hits++;
         return ceil(-log2(predictedSymbolProb));
     }
     else
     {
-        //wrongSymbolProbability = (1 - correctSymbolProbability) / (alphabetSize - 1);
-        //misses++;
         return ceil(-log2((1 - predictedSymbolProb) / (alphabetSize - 1)));
     }
 }

@@ -1,0 +1,4 @@
+Filename,Probability,Mutations,TrueMutations,FalseMutations 
+chry.txt,0.25,5667847,4249379,1418468
+chry.txt,0.5,11335959,8502117,2833842
+chry.txt,0.75,17002692,12753972,4248720

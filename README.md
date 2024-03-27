@@ -2,7 +2,7 @@
 ## How to compile
 
 ```bash
-g++ -O3 -o bin/cpm src/cpm.cpp
+g++ -o bin/cpm src/cpm.cpp
 ```
 ## How to run
 
@@ -15,7 +15,7 @@ All parameters are optional except the path to the file.
 - parameter k: Size of the window and anchors; default value is 8
 - parameter a: alpha; smoothing parameter; default value is 1
 - parameter t: cutoff threshold; default value is 0.5
-- parameter <path to file>: path to the file for the program to process  
+- parameter f: path to the file for the program to process  
 
 ## Example
 

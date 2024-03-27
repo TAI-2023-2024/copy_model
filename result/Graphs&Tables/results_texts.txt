@@ -1,0 +1,7 @@
+Filename,KmerSize,Alpha,Threshold,NBits,DefaultNBits,EncodedChars,NonEncodedChars,BitsPerChar,DefaultBitsPerChar,Duration(s) 
+chry,10,10,0.5,3.7999e+07,4.53364e+07,21921293,746932,1.67631,2,24
+sampledna,10,10,0.5,2.6688e+07,3.05e+07,7928178,2238489,2.62505,3,13
+biblia,10,10,0.5,2.76313e+07,3.50371e+07,2824954,2180353,5.5204,7,17
+alice,10,10,0.5,968474,1.19437e+06,51015,119609,5.67607,7,0
+lusiadas,10,10,0.5,2.36971e+06,2.41259e+06,54679,289977,6.87559,7,1
+

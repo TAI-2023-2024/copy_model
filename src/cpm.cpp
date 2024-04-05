@@ -11,7 +11,7 @@ using namespace std;
 
 string filename;
 double threshold;
-double kmerSize
+double kmerSize;
 double alpha;
 
 double nbits = 0;
